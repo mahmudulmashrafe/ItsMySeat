@@ -154,43 +154,44 @@ export default function App() {
         preload="auto"
       />
 
-      {/* Background Looping Glacier Express Nature Video */}
-      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-black">
+      {/* Instant Loading Background Glacier Express Nature Video */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
         <video
           autoPlay
           loop
           muted
           playsInline
+          preload="auto"
           className="w-full h-full object-cover scale-105 filter brightness-90 contrast-105"
         >
           <source src="/glacier-express.mp4" type="video/mp4" />
-          <source src="https://cdn.pixabay.com/video/2020/07/25/45569-443244046_large.mp4" type="video/mp4" />
+          <source src="https://cdn.pixabay.com/video/2020/07/25/45569-443244046_small.mp4" type="video/mp4" />
         </video>
         {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65"></div>
       </div>
 
-      {/* Main App Content Container */}
+      {/* Main App Content Container - Sleek & Balanced Max Width */}
       <div className="relative z-10 min-h-screen flex flex-col justify-between">
         
-        {/* Ultra-Transparent Glassmorphism Header */}
-        <header className="border-b border-white/20 bg-black/25 backdrop-blur-md sticky top-0 z-50 shadow-lg">
-          <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+        {/* Sleek Ultra-Transparent Glassmorphism Header */}
+        <header className="border-b border-white/20 bg-black/25 backdrop-blur-md sticky top-0 z-50 shadow-md">
+          <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
             
-            {/* Prominent Large Header Brand Logo */}
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-black/60 border border-white/30 p-1 shadow-2xl shadow-black/80 flex items-center justify-center group hover:scale-105 transition-all overflow-hidden shrink-0">
+            {/* Perfectly Proportioned Header Brand Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-black/50 border border-white/25 p-1 shadow-lg flex items-center justify-center group hover:scale-105 transition-all overflow-hidden shrink-0">
                 <img 
                   src="/favicon.svg" 
                   alt="Its My Seat Logo" 
-                  className="w-full h-full object-contain rounded-xl filter drop-shadow-md brightness-105" 
+                  className="w-full h-full object-contain rounded-lg filter drop-shadow-sm brightness-105" 
                 />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white drop-shadow-md flex items-center gap-2">
+                <h1 className="text-base sm:text-lg font-black tracking-tight text-white drop-shadow-sm flex items-center gap-1.5">
                   Its My Seat
                 </h1>
-                <p className="text-xs sm:text-sm font-bold text-white/90 drop-shadow-xs">Seat Lottery System</p>
+                <p className="text-[11px] sm:text-xs font-semibold text-white/80">Seat Lottery System</p>
               </div>
             </div>
 
@@ -198,14 +199,14 @@ export default function App() {
             <button
               type="button"
               onClick={toggleMusic}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-md ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-xs ${
                 isMusicPlaying
                   ? 'bg-[#DFB15B] text-black border-[#DFB15B]/80 shadow-[#DFB15B]/20 animate-pulse-subtle'
                   : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/25'
               }`}
               title={isMusicPlaying ? 'Mute Background Music' : 'Play Background Music (Music.mp3)'}
             >
-              {isMusicPlaying ? <Volume2 className="w-4.5 h-4.5 text-black animate-bounce" /> : <VolumeX className="w-4.5 h-4.5 text-white/70" />}
+              {isMusicPlaying ? <Volume2 className="w-3.5 h-3.5 text-black animate-bounce" /> : <VolumeX className="w-3.5 h-3.5 text-white/70" />}
               <span className="hidden sm:inline">{isMusicPlaying ? 'Music Playing' : 'Play Music'}</span>
             </button>
 
@@ -213,17 +214,17 @@ export default function App() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col">
+        <main className="flex-1 w-full max-w-[1360px] mx-auto px-4 sm:px-6 py-5 sm:py-7 flex flex-col">
           {errorMessage && (
-            <div className="mb-6 p-4 bg-rose-500/25 backdrop-blur-md border border-rose-400/40 text-rose-100 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-3 shadow-lg">
-              <AlertCircle className="w-5 h-5 shrink-0 text-rose-300" />
+            <div className="mb-5 p-3.5 bg-rose-500/25 backdrop-blur-md border border-rose-400/40 text-rose-100 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-md">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-300" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {step === 'input' && (
-            <div className="space-y-6 w-full flex-1 flex flex-col justify-between">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full items-start">
+            <div className="space-y-5 w-full flex-1 flex flex-col justify-between">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 w-full items-start">
                 <ParticipantInput
                   participantsText={participantsText}
                   setParticipantsText={setParticipantsText}
@@ -243,17 +244,17 @@ export default function App() {
                 />
               </div>
 
-              {/* Primary Action Button */}
-              <div className="pt-4 flex justify-center w-full">
+              {/* Sleek Primary Action Button */}
+              <div className="pt-2 flex justify-center w-full">
                 <button
                   type="button"
                   onClick={handleStartLottery}
                   disabled={!isValidToSubmit}
-                  className="w-full sm:w-auto px-12 py-4 bg-[#DFB15B] hover:bg-[#caa050] text-black font-black text-base rounded-2xl shadow-2xl shadow-[#DFB15B]/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3 cursor-pointer"
+                  className="w-full sm:w-auto px-10 py-3.5 bg-[#DFB15B] hover:bg-[#caa050] text-black font-black text-sm sm:text-base rounded-xl shadow-xl shadow-[#DFB15B]/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2.5 cursor-pointer"
                 >
-                  <Dices className="w-6 h-6 text-black" />
+                  <Dices className="w-5 h-5 text-black" />
                   <span>Run Seat Lottery</span>
-                  <Sparkles className="w-5 h-5 text-black" />
+                  <Sparkles className="w-4 h-4 text-black" />
                 </button>
               </div>
             </div>
@@ -276,7 +277,7 @@ export default function App() {
         </main>
 
         {/* Ultra-Transparent Footer */}
-        <footer className="border-t border-white/20 bg-black/25 backdrop-blur-md py-6 text-center text-xs font-bold text-white/80">
+        <footer className="border-t border-white/20 bg-black/25 backdrop-blur-md py-4 text-center text-xs font-bold text-white/80">
           <p>Its My Seat &bull; Fair Seat Allocation</p>
         </footer>
       </div>
