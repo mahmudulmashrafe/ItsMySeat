@@ -177,34 +177,16 @@ export default function App() {
         <header className="border-b border-white/20 bg-black/25 backdrop-blur-md sticky top-0 z-50 shadow-lg">
           <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
             
-            {/* Combined Nature + Travel + Seat Logo & Title */}
+            {/* Header Brand Logo matching favicon.svg 100% */}
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-black via-[#1C1614] to-[#DFB15B] p-0.5 shadow-xl shadow-black/50 flex items-center justify-center group hover:scale-105 transition-transform">
-                <div className="w-full h-full bg-black/85 backdrop-blur-md rounded-[14px] flex items-center justify-center p-1">
-                  {/* Custom Combined SVG Logo: Nature (Mountains) + Travel (Sun/Compass) + Seat */}
-                  <svg className="w-8 h-8" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="44" cy="18" r="5" fill="#DFB15B" />
-                    <path d="M44 9V11M44 25V27M35 18H37M51 18H53" stroke="#DFB15B" strokeWidth="1.8" strokeLinecap="round" />
-                    <path d="M10 46L24 24L33 36L42 20L54 46H10Z" fill="url(#headerMountainGrad)" />
-                    <path d="M24 24L28 30L33 28L42 20L45.5 25" stroke="#DFB15B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M20 50V38C20 35.7909 21.7909 34 24 34H40C42.2091 34 44 35.7909 44 38V50" stroke="#FAF3F0" strokeWidth="2.8" strokeLinecap="round" />
-                    <path d="M24 28C24 25.7909 25.7909 24 28 24H36C38.2091 24 40 25.7909 40 28V34H24V28Z" fill="#DFB15B" fillOpacity="0.6" stroke="#FAF3F0" strokeWidth="2.2" />
-                    <path d="M17 42H47" stroke="#FAF3F0" strokeWidth="2.8" strokeLinecap="round" />
-                    <path d="M24 50V54M40 50V54" stroke="#DFB15B" strokeWidth="2.8" strokeLinecap="round" />
-                    <defs>
-                      <linearGradient id="headerMountainGrad" x1="32" y1="20" x2="32" y2="46" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#DFB15B" stopOpacity="0.75"/>
-                        <stop offset="1" stopColor="#1C1614"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
+              <div className="w-12 h-12 rounded-2xl bg-black/40 border border-white/20 p-1 shadow-xl shadow-black/50 flex items-center justify-center group hover:scale-105 transition-transform overflow-hidden">
+                <img src="/favicon.svg" alt="Its My Seat Logo" className="w-full h-full object-contain rounded-xl" />
               </div>
               <div>
                 <h1 className="text-lg sm:text-xl font-black tracking-tight text-white drop-shadow-md flex items-center gap-1.5">
                   Its My Seat
                 </h1>
-                <p className="text-[11px] sm:text-xs font-bold text-white/80 drop-shadow-xs">Nature & Travel Seat Lottery</p>
+                <p className="text-[11px] sm:text-xs font-bold text-white/80 drop-shadow-xs">Seat Lottery System</p>
               </div>
             </div>
 
