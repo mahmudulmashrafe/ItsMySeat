@@ -171,49 +171,49 @@ export default function App() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65"></div>
       </div>
 
-      {/* Main App Content Container - Sleek & Balanced Max Width */}
-      <div className="relative z-10 min-h-screen flex flex-col justify-between">
-        
-        {/* Sleek Ultra-Transparent Glassmorphism Header */}
-        <header className="border-b border-white/20 bg-black/25 backdrop-blur-md sticky top-0 z-50 shadow-md">
-          <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-            
-            {/* Perfectly Proportioned Header Brand Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-black/50 border border-white/25 p-1 shadow-lg flex items-center justify-center group hover:scale-105 transition-all overflow-hidden shrink-0">
-                <img 
-                  src="/favicon.svg" 
-                  alt="Its My Seat Logo" 
-                  className="w-full h-full object-contain rounded-lg filter drop-shadow-sm brightness-105" 
-                />
-              </div>
-              <div>
-                <h1 className="text-base sm:text-lg font-black tracking-tight text-white drop-shadow-sm flex items-center gap-1.5">
-                  Its My Seat
-                </h1>
-                <p className="text-[11px] sm:text-xs font-semibold text-white/80">Seat Lottery System</p>
-              </div>
+      {/* FIXED TOP BAR - Pinned for both Mobile & Web */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/20 bg-black/40 backdrop-blur-lg shadow-lg">
+        <div className="w-full max-w-[1360px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+          
+          {/* Header Brand Logo */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-black/50 border border-white/25 p-1 shadow-lg flex items-center justify-center group hover:scale-105 transition-all overflow-hidden shrink-0">
+              <img 
+                src="/favicon.svg" 
+                alt="Its My Seat Logo" 
+                className="w-full h-full object-contain rounded-lg filter drop-shadow-sm brightness-105" 
+              />
             </div>
-
-            {/* Background Music Toggle Button */}
-            <button
-              type="button"
-              onClick={toggleMusic}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-xs ${
-                isMusicPlaying
-                  ? 'bg-[#DFB15B] text-black border-[#DFB15B]/80 shadow-[#DFB15B]/20 animate-pulse-subtle'
-                  : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/25'
-              }`}
-              title={isMusicPlaying ? 'Mute Background Music' : 'Play Background Music (Music.mp3)'}
-            >
-              {isMusicPlaying ? <Volume2 className="w-3.5 h-3.5 text-black animate-bounce" /> : <VolumeX className="w-3.5 h-3.5 text-white/70" />}
-              <span className="hidden sm:inline">{isMusicPlaying ? 'Music Playing' : 'Play Music'}</span>
-            </button>
-
+            <div>
+              <h1 className="text-base sm:text-lg font-black tracking-tight text-white drop-shadow-sm flex items-center gap-1.5">
+                Its My Seat
+              </h1>
+              <p className="text-[10px] sm:text-xs font-semibold text-white/80">Seat Lottery System</p>
+            </div>
           </div>
-        </header>
 
-        {/* Main Content */}
+          {/* Background Music Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleMusic}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-xs ${
+              isMusicPlaying
+                ? 'bg-[#DFB15B] text-black border-[#DFB15B]/80 shadow-[#DFB15B]/20 animate-pulse-subtle'
+                : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/25'
+            }`}
+            title={isMusicPlaying ? 'Mute Background Music' : 'Play Background Music (Music.mp3)'}
+          >
+            {isMusicPlaying ? <Volume2 className="w-3.5 h-3.5 text-black animate-bounce" /> : <VolumeX className="w-3.5 h-3.5 text-white/70" />}
+            <span className="hidden sm:inline">{isMusicPlaying ? 'Music Playing' : 'Play Music'}</span>
+          </button>
+
+        </div>
+      </header>
+
+      {/* Main App Content Container with Top Padding to clear fixed header */}
+      <div className="relative z-10 min-h-screen flex flex-col justify-between pt-16 sm:pt-20">
+        
+        {/* Main Content Area */}
         <main className="flex-1 w-full max-w-[1360px] mx-auto px-4 sm:px-6 py-5 sm:py-7 flex flex-col">
           {errorMessage && (
             <div className="mb-5 p-3.5 bg-rose-500/25 backdrop-blur-md border border-rose-400/40 text-rose-100 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2.5 shadow-md">
@@ -244,7 +244,7 @@ export default function App() {
                 />
               </div>
 
-              {/* Sleek Primary Action Button */}
+              {/* Primary Action Button */}
               <div className="pt-2 flex justify-center w-full">
                 <button
                   type="button"
