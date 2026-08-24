@@ -175,18 +175,22 @@ export default function App() {
         
         {/* Ultra-Transparent Glassmorphism Header */}
         <header className="border-b border-white/20 bg-black/25 backdrop-blur-md sticky top-0 z-50 shadow-lg">
-          <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
             
-            {/* Header Brand Logo matching favicon.svg 100% */}
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-black/40 border border-white/20 p-1 shadow-xl shadow-black/50 flex items-center justify-center group hover:scale-105 transition-transform overflow-hidden">
-                <img src="/favicon.svg" alt="Its My Seat Logo" className="w-full h-full object-contain rounded-xl" />
+            {/* Prominent Large Header Brand Logo */}
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-black/60 border border-white/30 p-1 shadow-2xl shadow-black/80 flex items-center justify-center group hover:scale-105 transition-all overflow-hidden shrink-0">
+                <img 
+                  src="/favicon.svg" 
+                  alt="Its My Seat Logo" 
+                  className="w-full h-full object-contain rounded-xl filter drop-shadow-md brightness-105" 
+                />
               </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-black tracking-tight text-white drop-shadow-md flex items-center gap-1.5">
+                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white drop-shadow-md flex items-center gap-2">
                   Its My Seat
                 </h1>
-                <p className="text-[11px] sm:text-xs font-bold text-white/80 drop-shadow-xs">Seat Lottery System</p>
+                <p className="text-xs sm:text-sm font-bold text-white/90 drop-shadow-xs">Seat Lottery System</p>
               </div>
             </div>
 
@@ -194,14 +198,14 @@ export default function App() {
             <button
               type="button"
               onClick={toggleMusic}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-md ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-md ${
                 isMusicPlaying
                   ? 'bg-[#DFB15B] text-black border-[#DFB15B]/80 shadow-[#DFB15B]/20 animate-pulse-subtle'
                   : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/25'
               }`}
               title={isMusicPlaying ? 'Mute Background Music' : 'Play Background Music (Music.mp3)'}
             >
-              {isMusicPlaying ? <Volume2 className="w-4 h-4 text-black animate-bounce" /> : <VolumeX className="w-4 h-4 text-white/70" />}
+              {isMusicPlaying ? <Volume2 className="w-4.5 h-4.5 text-black animate-bounce" /> : <VolumeX className="w-4.5 h-4.5 text-white/70" />}
               <span className="hidden sm:inline">{isMusicPlaying ? 'Music Playing' : 'Play Music'}</span>
             </button>
 
