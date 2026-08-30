@@ -6,6 +6,23 @@ import ResultView from './components/ResultView.jsx';
 import { runSeatLottery } from './utils/lottery.js';
 import { Dices, Sparkles, AlertCircle, Volume2, VolumeX } from 'lucide-react';
 
+// Background Theme Configurations (Preserves both new Facebook Reel & original Glacier Express)
+const THEMES = {
+  reel: {
+    videoSrc: '/reel-bg.mp4',
+    audioSrc: '/reel-audio.m4a',
+    name: 'Facebook Reel'
+  },
+  glacier: {
+    videoSrc: '/glacier-express.mp4',
+    audioSrc: '/Music.mp3',
+    name: 'Glacier Express'
+  }
+};
+
+// Set active theme ('reel' is default active, 'glacier' preserved for easy restoration)
+const CURRENT_THEME = THEMES.reel;
+
 export default function App() {
   const [participantsText, setParticipantsText] = useState('');
   const [seatMode, setSeatMode] = useState('window_nonwindow');
@@ -145,16 +162,16 @@ export default function App() {
   return (
     <div className="relative min-h-screen text-white flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#DFB15B] selection:text-black overflow-x-hidden">
       
-      {/* Background Looping Music HTML5 Audio Element */}
+      {/* Background Looping Audio Element (Uses Active Theme Audio) */}
       <audio
         ref={audioRef}
-        src="/Music.mp3"
+        src={CURRENT_THEME.audioSrc}
         autoPlay
         loop
         preload="auto"
       />
 
-      {/* Instant Loading Background Glacier Express Nature Video */}
+      {/* Background Looping Video (Uses Active Theme Video from Facebook Reel) */}
       <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
         <video
           autoPlay
@@ -164,10 +181,9 @@ export default function App() {
           preload="auto"
           className="w-full h-full object-cover scale-105 filter brightness-90 contrast-105"
         >
-          <source src="/glacier-express.mp4" type="video/mp4" />
-          <source src="https://cdn.pixabay.com/video/2020/07/25/45569-443244046_small.mp4" type="video/mp4" />
+          <source src={CURRENT_THEME.videoSrc} type="video/mp4" />
         </video>
-        {/* Dark gradient overlay */}
+        {/* Dark gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65"></div>
       </div>
 
@@ -201,7 +217,7 @@ export default function App() {
                 ? 'bg-[#DFB15B] text-black border-[#DFB15B]/80 shadow-[#DFB15B]/20 animate-pulse-subtle'
                 : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/25'
             }`}
-            title={isMusicPlaying ? 'Mute Background Music' : 'Play Background Music (Music.mp3)'}
+            title={isMusicPlaying ? 'Mute Background Music' : 'Play Background Music'}
           >
             {isMusicPlaying ? <Volume2 className="w-3.5 h-3.5 text-black animate-bounce" /> : <VolumeX className="w-3.5 h-3.5 text-white/70" />}
             <span className="hidden sm:inline">{isMusicPlaying ? 'Music Playing' : 'Play Music'}</span>
