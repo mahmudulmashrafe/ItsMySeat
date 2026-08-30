@@ -1,22 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ParticipantInput from './components/ParticipantInput.jsx';
 import SeatConfig from './components/SeatConfig.jsx';
 import LotteryAnimation from './components/LotteryAnimation.jsx';
 import ResultView from './components/ResultView.jsx';
 import { runSeatLottery } from './utils/lottery.js';
-import { Dices, Sparkles, AlertCircle, Volume2, VolumeX } from 'lucide-react';
+import { Dices, Sparkles, AlertCircle } from 'lucide-react';
 
-// Background Theme Configurations (Universal H.264 format for 100% iOS & Mobile compatibility)
+// Background Theme Configurations (Silent Video Background)
 const THEMES = {
   reel: {
     videoSrc: '/reel-synced.mp4',
-    audioSrc: '/reel-audio.m4a',
-    name: 'Facebook Reel H.264 HD'
+    name: 'Facebook Reel Silent HD'
   },
   glacier: {
     videoSrc: '/glacier-express.mp4',
-    audioSrc: '/Music.mp3',
-    name: 'Glacier Express'
+    name: 'Glacier Express Silent HD'
   }
 };
 
@@ -36,11 +34,6 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Background Sound State
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  const audioRef = useRef(null);
-  const videoRef = useRef(null);
-
   const participantsList = participantsText
     .split('\n')
     .map(p => p.trim())
@@ -55,55 +48,8 @@ export default function App() {
     }
   }, [participantsText, seatMode]);
 
-  // Universal Mobile Autoplay: Force video play on mount, handle audio on gesture
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.play().catch(err => {
-        console.log('Mobile video autoplay fallback:', err);
-      });
-    }
-
-    const handleGesturePlay = () => {
-      if (audioRef.current && !isMusicPlaying) {
-        audioRef.current.play()
-          .then(() => setIsMusicPlaying(true))
-          .catch(() => {});
-      }
-      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
-        window.removeEventListener(evt, handleGesturePlay);
-      });
-    };
-
-    ['pointerdown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
-      window.addEventListener(evt, handleGesturePlay, { once: true });
-    });
-
-    return () => {
-      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
-        window.removeEventListener(evt, handleGesturePlay);
-      });
-    };
-  }, []);
-
-  const toggleMusic = () => {
-    if (!audioRef.current) return;
-    if (isMusicPlaying) {
-      audioRef.current.pause();
-      setIsMusicPlaying(false);
-    } else {
-      audioRef.current.play()
-        .then(() => setIsMusicPlaying(true))
-        .catch(err => console.log('Audio play error:', err));
-    }
-  };
-
   const handleStartLottery = () => {
     setErrorMessage(null);
-
-    if (audioRef.current && !isMusicPlaying) {
-      audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
-    }
 
     if (participantsList.length < 2) {
       setErrorMessage('Please enter at least 2 participants.');
@@ -160,18 +106,9 @@ export default function App() {
   return (
     <div className="relative min-h-screen text-white flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#DFB15B] selection:text-black overflow-x-hidden">
       
-      {/* Background Audio Element */}
-      <audio
-        ref={audioRef}
-        src={CURRENT_THEME.audioSrc}
-        loop
-        preload="auto"
-      />
-
-      {/* Universal H.264 Mobile Compatible Video Background (iOS Safari & Android Ready) */}
+      {/* Universal Silent Mobile-Compatible Video Background (iOS Safari & Android Ready) */}
       <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
         <video
-          ref={videoRef}
           autoPlay
           loop
           muted
@@ -206,21 +143,6 @@ export default function App() {
               <p className="text-[10px] sm:text-xs font-semibold text-white/80">Seat Lottery System</p>
             </div>
           </div>
-
-          {/* Background Music/Sound Toggle Button */}
-          <button
-            type="button"
-            onClick={toggleMusic}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shadow-xs ${
-              isMusicPlaying
-                ? 'bg-[#DFB15B] text-black border-[#DFB15B]/80 shadow-[#DFB15B]/20 animate-pulse-subtle'
-                : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/25'
-            }`}
-            title={isMusicPlaying ? 'Mute Background Sound' : 'Play Background Sound'}
-          >
-            {isMusicPlaying ? <Volume2 className="w-3.5 h-3.5 text-black animate-bounce" /> : <VolumeX className="w-3.5 h-3.5 text-white/70" />}
-            <span className="hidden sm:inline">{isMusicPlaying ? 'Sound On' : 'Sound Off'}</span>
-          </button>
 
         </div>
       </header>
