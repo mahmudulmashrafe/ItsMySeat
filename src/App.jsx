@@ -6,19 +6,18 @@ import ResultView from './components/ResultView.jsx';
 import { runSeatLottery } from './utils/lottery.js';
 import { Dices, Sparkles, AlertCircle } from 'lucide-react';
 
-// Background Theme Configurations (Silent Video Background)
+// Background Theme Configurations
 const THEMES = {
   reel: {
     videoSrc: '/reel-synced.mp4',
-    name: 'Facebook Reel Silent HD'
+    name: 'Facebook Reel'
   },
   glacier: {
     videoSrc: '/glacier-express.mp4',
-    name: 'Glacier Express Silent HD'
+    name: 'Glacier Express'
   }
 };
 
-// Set active theme ('reel' is default active, 'glacier' preserved for easy restoration)
 const CURRENT_THEME = THEMES.reel;
 
 export default function App() {
@@ -29,6 +28,9 @@ export default function App() {
   
   // Custom seats state
   const [customSeats, setCustomSeats] = useState([]);
+
+  // Redraw sequence tracking state
+  const [redrawCount, setRedrawCount] = useState(0);
 
   const [step, setStep] = useState('input');
   const [results, setResults] = useState([]);
@@ -50,6 +52,7 @@ export default function App() {
 
   const handleStartLottery = () => {
     setErrorMessage(null);
+    setRedrawCount(0); // Initial draw (redrawCount = 0)
 
     if (participantsList.length < 2) {
       setErrorMessage('Please enter at least 2 participants.');
@@ -77,7 +80,8 @@ export default function App() {
       const outcome = runSeatLottery(participantsList, seatMode, {
         customSeats,
         windowCount,
-        nonWindowCount
+        nonWindowCount,
+        redrawCount
       });
       setResults(outcome);
       setStep('results');
@@ -88,6 +92,7 @@ export default function App() {
   };
 
   const handleRedraw = () => {
+    setRedrawCount(prev => prev + 1); // Increment redraw count (1st redraw, 2nd redraw, etc.)
     setStep('drawing');
   };
 
@@ -95,6 +100,7 @@ export default function App() {
     setStep('input');
     setResults([]);
     setErrorMessage(null);
+    setRedrawCount(0);
   };
 
   const currentTotalSeats = seatMode === 'window_nonwindow'
@@ -106,7 +112,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen text-white flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#DFB15B] selection:text-black overflow-x-hidden">
       
-      {/* Universal Silent Mobile-Compatible Video Background (iOS Safari & Android Ready) */}
+      {/* Universal Silent Mobile-Compatible Video Background */}
       <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
         <video
           autoPlay

@@ -11,15 +11,28 @@ export function shuffleArray(array) {
 }
 
 /**
- * Conducts the seat lottery with VIP preference logic.
- * Preference Rule: Any participant named "mash" (case-insensitive) is prioritised to receive a window seat.
+ * Conducts the seat lottery with conditional "mash" VIP preference logic.
+ * 
+ * Rules for "mash" bias:
+ * - 1st Draw (redrawCount = 0): WORK
+ * - 1st Redraw (redrawCount = 1): NOT WORK
+ * - 2nd Redraw (redrawCount = 2): WORK
+ * - 3rd Redraw (redrawCount = 3): WORK
+ * - 4th Redraw (redrawCount = 4): NOT WORK
+ * - 5th Redraw (redrawCount = 5): WORK
+ * - 6th Redraw (redrawCount = 6): NOT WORK
+ * - 7th Redraw (redrawCount = 7): WORK
+ * - 8th Redraw (redrawCount = 8): WORK
+ * - 9th & 10th Redraw (redrawCount = 9, 10): NOT WORK
+ * - 11th & 12th Redraw (redrawCount = 11, 12): WORK
  * 
  * @param {Array<string>} participants - List of participant names (minimum 2)
  * @param {'custom' | 'window_nonwindow'} seatMode - Mode of seat configuration
  * @param {Object} options
- * @param {Array<{ seat: string, isWindow?: boolean, type?: string }>} options.customSeats - Array of custom seats
- * @param {number} options.windowCount - Number of window seats
- * @param {number} options.nonWindowCount - Number of non-window seats
+ * @param {Array<{ seat: string, isWindow?: boolean, type?: string }>} options.customSeats
+ * @param {number} options.windowCount
+ * @param {number} options.nonWindowCount
+ * @param {number} options.redrawCount - Number of redraws performed (0 = initial draw)
  * @returns {Array<{ participant: string, seat: string, type: 'custom' | 'window' | 'non_window' }>}
  */
 export function runSeatLottery(participants, seatMode, options = {}) {
@@ -81,13 +94,32 @@ export function runSeatLottery(participants, seatMode, options = {}) {
     }
   }
 
+  const redrawCount = parseInt(options.redrawCount || 0, 10);
+
+  // Set of redraw counts where "mash" bias is active
+  // Initial draw (0), 2nd redraw (2), 3rd redraw (3), 5th redraw (5), 7th redraw (7), 8th redraw (8), 11th redraw (11), 12th redraw (12)
+  const biasActiveRedraws = new Set([0, 2, 3, 5, 7, 8, 11, 12]);
+  
+  const isBiasActive = biasActiveRedraws.has(redrawCount) || (redrawCount > 12 && redrawCount % 5 !== 1 && redrawCount % 5 !== 4);
+
   // Identify VIP participants named "mash" (case-insensitive)
   const isMash = (name) => name.toLowerCase() === 'mash';
   
   const vipParticipants = cleanedParticipants.filter(isMash);
   const regularParticipants = cleanedParticipants.filter(p => !isMash(p));
 
-  // Separate available window and non-window seats
+  // If bias is not active for this draw, run standard unbiased lottery for everyone
+  if (!isBiasActive || vipParticipants.length === 0) {
+    const shuffledSeats = shuffleArray(seatList);
+    const shuffledAllParticipants = shuffleArray(cleanedParticipants);
+    return shuffledAllParticipants.map((participant, index) => ({
+      participant,
+      seat: shuffledSeats[index].seat,
+      type: shuffledSeats[index].type
+    }));
+  }
+
+  // Separate available window and non-window seats when bias is active
   const windowSeats = shuffleArray(seatList.filter(s => s.type === 'window'));
   const nonWindowSeats = shuffleArray(seatList.filter(s => s.type !== 'window'));
 
@@ -103,7 +135,6 @@ export function runSeatLottery(participants, seatMode, options = {}) {
         type: assignedSeat.type
       });
     } else if (nonWindowSeats.length > 0) {
-      // Fallback to remaining seats if window seats run out
       const assignedSeat = nonWindowSeats.pop();
       assignments.push({
         participant: vip,
