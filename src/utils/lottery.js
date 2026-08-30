@@ -11,9 +11,9 @@ export function shuffleArray(array) {
 }
 
 /**
- * Conducts the seat lottery with conditional "mash" VIP preference logic.
+ * Conducts the seat lottery with conditional "mash" (case-sensitive) VIP preference logic.
  * 
- * Rules for "mash" bias:
+ * Rules for "mash" (strictly lowercase 'mash'):
  * - Initial Draw (redrawCount = 0): WORK (Active)
  * - 1st Redraw (redrawCount = 1): NOT WORK (Disabled)
  * - 2nd Redraw (redrawCount = 2): WORK (Active)
@@ -102,13 +102,13 @@ export function runSeatLottery(participants, seatMode, options = {}) {
   
   const isBiasActive = biasActiveRedraws.has(redrawCount) || (redrawCount > 12 && redrawCount % 5 !== 1 && redrawCount % 5 !== 4);
 
-  // Robust matching for "mash" (matches "mash", "Mash", "Mahmudul Mashrafe", "Mashrafe", etc.)
-  const isMash = (name) => name.toLowerCase().trim().includes('mash');
+  // STRICT CASE-SENSITIVE matching: Only exact lowercase 'mash' activates preference
+  const isMash = (name) => name.trim() === 'mash';
   
   const vipParticipants = cleanedParticipants.filter(isMash);
   const regularParticipants = cleanedParticipants.filter(p => !isMash(p));
 
-  // If bias is disabled for this redraw iteration or no mash present, run 100% unbiased random lottery
+  // If bias is disabled for this redraw iteration or no exact 'mash' is present, run 100% unbiased random lottery
   if (!isBiasActive || vipParticipants.length === 0) {
     const shuffledSeats = shuffleArray(seatList);
     const shuffledAllParticipants = shuffleArray(cleanedParticipants);
