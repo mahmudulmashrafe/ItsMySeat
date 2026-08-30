@@ -6,12 +6,12 @@ import ResultView from './components/ResultView.jsx';
 import { runSeatLottery } from './utils/lottery.js';
 import { Dices, Sparkles, AlertCircle, Volume2, VolumeX } from 'lucide-react';
 
-// Background Theme Configurations (Preserves both new Facebook Reel & original Glacier Express)
+// Background Theme Configurations (Preserves both Facebook Reel & Glacier Express)
 const THEMES = {
   reel: {
-    videoSrc: '/reel-bg.mp4',
-    audioSrc: '/reel-audio.m4a',
-    name: 'Facebook Reel 1080p HD'
+    videoSrc: '/reel-synced.mp4', // Multiplexed 1:1 perfectly synced video + audio track
+    audioSrc: null, // Audio is natively synced inside video stream
+    name: 'Facebook Reel (Synced Video & Sound)'
   },
   glacier: {
     videoSrc: '/glacier-express.mp4',
@@ -36,8 +36,9 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Background Audio State
+  // Background Sound State (Unmuted by default for synced video sound)
   const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+  const videoRef = useRef(null);
   const audioRef = useRef(null);
 
   const participantsList = participantsText
@@ -54,24 +55,27 @@ export default function App() {
     }
   }, [participantsText, seatMode]);
 
-  // Default Auto-Play Music immediately on mount & on any page interaction fallback
+  // Handle Autoplay & Interaction Fallback for Synced Audio & Video
   useEffect(() => {
-    const playAudio = () => {
-      if (audioRef.current) {
-        audioRef.current.play()
-          .then(() => {
-            setIsMusicPlaying(true);
-          })
-          .catch((err) => {
-            console.log('Browser Autoplay Policy restriction, waiting for user gesture:', err);
-          });
+    const enableAudio = () => {
+      if (CURRENT_THEME.audioSrc && audioRef.current) {
+        audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
+      } else if (videoRef.current) {
+        videoRef.current.muted = !isMusicPlaying;
+        videoRef.current.play().then(() => {}).catch(() => {});
       }
     };
 
-    playAudio();
+    enableAudio();
 
     const handleGesturePlay = () => {
-      playAudio();
+      if (videoRef.current) {
+        videoRef.current.muted = false;
+        videoRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
+      }
+      if (audioRef.current) {
+        audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
+      }
       ['pointerdown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
         window.removeEventListener(evt, handleGesturePlay);
       });
@@ -88,23 +92,38 @@ export default function App() {
     };
   }, []);
 
+  // Update video muted state whenever isMusicPlaying changes
+  useEffect(() => {
+    if (videoRef.current && !CURRENT_THEME.audioSrc) {
+      videoRef.current.muted = !isMusicPlaying;
+    }
+  }, [isMusicPlaying]);
+
   const toggleMusic = () => {
-    if (!audioRef.current) return;
-    if (isMusicPlaying) {
-      audioRef.current.pause();
-      setIsMusicPlaying(false);
-    } else {
-      audioRef.current.play()
-        .then(() => setIsMusicPlaying(true))
-        .catch(err => console.log('Audio play error:', err));
+    if (CURRENT_THEME.audioSrc && audioRef.current) {
+      if (isMusicPlaying) {
+        audioRef.current.pause();
+        setIsMusicPlaying(false);
+      } else {
+        audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
+      }
+    } else if (videoRef.current) {
+      const nextState = !isMusicPlaying;
+      videoRef.current.muted = !nextState;
+      if (nextState) {
+        videoRef.current.play().then(() => {}).catch(() => {});
+      }
+      setIsMusicPlaying(nextState);
     }
   };
 
   const handleStartLottery = () => {
     setErrorMessage(null);
 
-    if (audioRef.current && !isMusicPlaying) {
-      audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
+    if (!isMusicPlaying) {
+      setIsMusicPlaying(true);
+      if (videoRef.current) videoRef.current.muted = false;
+      if (audioRef.current) audioRef.current.play().catch(() => {});
     }
 
     if (participantsList.length < 2) {
@@ -162,28 +181,31 @@ export default function App() {
   return (
     <div className="relative min-h-screen text-white flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#DFB15B] selection:text-black overflow-x-hidden">
       
-      {/* Background Looping Audio Element (Uses Active Theme Audio) */}
-      <audio
-        ref={audioRef}
-        src={CURRENT_THEME.audioSrc}
-        autoPlay
-        loop
-        preload="auto"
-      />
-
-      {/* Full 1080p High-Resolution Background Video (Facebook Reel 1080x1920) */}
-      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
-        <video
+      {/* Separate Background Audio (Used only if Theme has external audioSrc like Glacier Express) */}
+      {CURRENT_THEME.audioSrc && (
+        <audio
+          ref={audioRef}
+          src={CURRENT_THEME.audioSrc}
           autoPlay
           loop
-          muted
+          preload="auto"
+        />
+      )}
+
+      {/* Perfectly Synced 1080p Video + Audio Multiplexed Stream */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted={!isMusicPlaying}
           playsInline
           preload="auto"
           className="w-full h-full object-cover"
         >
           <source src={CURRENT_THEME.videoSrc} type="video/mp4" />
         </video>
-        {/* Subtle dark gradient overlay for text readability */}
+        {/* Subtle dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65"></div>
       </div>
 
@@ -208,7 +230,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Background Music Toggle Button */}
+          {/* Background Music/Sound Toggle Button */}
           <button
             type="button"
             onClick={toggleMusic}
@@ -217,10 +239,10 @@ export default function App() {
                 ? 'bg-[#DFB15B] text-black border-[#DFB15B]/80 shadow-[#DFB15B]/20 animate-pulse-subtle'
                 : 'bg-black/40 hover:bg-black/60 text-white/90 border-white/25'
             }`}
-            title={isMusicPlaying ? 'Mute Background Music' : 'Play Background Music'}
+            title={isMusicPlaying ? 'Mute Background Sound' : 'Play Background Sound'}
           >
             {isMusicPlaying ? <Volume2 className="w-3.5 h-3.5 text-black animate-bounce" /> : <VolumeX className="w-3.5 h-3.5 text-white/70" />}
-            <span className="hidden sm:inline">{isMusicPlaying ? 'Music Playing' : 'Play Music'}</span>
+            <span className="hidden sm:inline">{isMusicPlaying ? 'Sound On' : 'Sound Off'}</span>
           </button>
 
         </div>
