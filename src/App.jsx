@@ -9,9 +9,9 @@ import { Dices, Sparkles, AlertCircle, Volume2, VolumeX } from 'lucide-react';
 // Background Theme Configurations (Preserves both Facebook Reel & Glacier Express)
 const THEMES = {
   reel: {
-    videoSrc: '/reel-synced.mp4', // Multiplexed 1:1 perfectly synced video + audio track
-    audioSrc: null, // Audio is natively synced inside video stream
-    name: 'Facebook Reel (Synced Video & Sound)'
+    videoSrc: '/reel-synced.mp4',
+    audioSrc: '/reel-audio.m4a',
+    name: 'Facebook Reel'
   },
   glacier: {
     videoSrc: '/glacier-express.mp4',
@@ -36,10 +36,10 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  // Background Sound State (Unmuted by default for synced video sound)
-  const [isMusicPlaying, setIsMusicPlaying] = useState(true);
-  const videoRef = useRef(null);
+  // Background Sound State
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const audioRef = useRef(null);
+  const videoRef = useRef(null);
 
   const participantsList = participantsText
     .split('\n')
@@ -55,26 +55,21 @@ export default function App() {
     }
   }, [participantsText, seatMode]);
 
-  // Handle Autoplay & Interaction Fallback for Synced Audio & Video
+  // Ensure Mobile Autoplay: Video plays muted immediately, audio attaches to user gesture
   useEffect(() => {
-    const enableAudio = () => {
-      if (CURRENT_THEME.audioSrc && audioRef.current) {
-        audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
-      } else if (videoRef.current) {
-        videoRef.current.muted = !isMusicPlaying;
-        videoRef.current.play().then(() => {}).catch(() => {});
-      }
-    };
-
-    enableAudio();
+    // Force video playback on mobile
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(err => {
+        console.log('Video autoplay fallback:', err);
+      });
+    }
 
     const handleGesturePlay = () => {
-      if (videoRef.current) {
-        videoRef.current.muted = false;
-        videoRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
-      }
-      if (audioRef.current) {
-        audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
+      if (audioRef.current && !isMusicPlaying) {
+        audioRef.current.play()
+          .then(() => setIsMusicPlaying(true))
+          .catch(() => {});
       }
       ['pointerdown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt => {
         window.removeEventListener(evt, handleGesturePlay);
@@ -92,38 +87,23 @@ export default function App() {
     };
   }, []);
 
-  // Update video muted state whenever isMusicPlaying changes
-  useEffect(() => {
-    if (videoRef.current && !CURRENT_THEME.audioSrc) {
-      videoRef.current.muted = !isMusicPlaying;
-    }
-  }, [isMusicPlaying]);
-
   const toggleMusic = () => {
-    if (CURRENT_THEME.audioSrc && audioRef.current) {
-      if (isMusicPlaying) {
-        audioRef.current.pause();
-        setIsMusicPlaying(false);
-      } else {
-        audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
-      }
-    } else if (videoRef.current) {
-      const nextState = !isMusicPlaying;
-      videoRef.current.muted = !nextState;
-      if (nextState) {
-        videoRef.current.play().then(() => {}).catch(() => {});
-      }
-      setIsMusicPlaying(nextState);
+    if (!audioRef.current) return;
+    if (isMusicPlaying) {
+      audioRef.current.pause();
+      setIsMusicPlaying(false);
+    } else {
+      audioRef.current.play()
+        .then(() => setIsMusicPlaying(true))
+        .catch(err => console.log('Audio play error:', err));
     }
   };
 
   const handleStartLottery = () => {
     setErrorMessage(null);
 
-    if (!isMusicPlaying) {
-      setIsMusicPlaying(true);
-      if (videoRef.current) videoRef.current.muted = false;
-      if (audioRef.current) audioRef.current.play().catch(() => {});
+    if (audioRef.current && !isMusicPlaying) {
+      audioRef.current.play().then(() => setIsMusicPlaying(true)).catch(() => {});
     }
 
     if (participantsList.length < 2) {
@@ -181,24 +161,21 @@ export default function App() {
   return (
     <div className="relative min-h-screen text-white flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#DFB15B] selection:text-black overflow-x-hidden">
       
-      {/* Separate Background Audio (Used only if Theme has external audioSrc like Glacier Express) */}
-      {CURRENT_THEME.audioSrc && (
-        <audio
-          ref={audioRef}
-          src={CURRENT_THEME.audioSrc}
-          autoPlay
-          loop
-          preload="auto"
-        />
-      )}
+      {/* Background Audio Element (Allows clean sound toggling without breaking mobile video autoplay) */}
+      <audio
+        ref={audioRef}
+        src={CURRENT_THEME.audioSrc}
+        loop
+        preload="auto"
+      />
 
-      {/* Perfectly Synced 1080p Video + Audio Multiplexed Stream */}
+      {/* Guaranteed Mobile Autoplay Video Background (Muted + PlaysInline) */}
       <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
         <video
           ref={videoRef}
           autoPlay
           loop
-          muted={!isMusicPlaying}
+          muted
           playsInline
           preload="auto"
           className="w-full h-full object-cover"
