@@ -6,12 +6,12 @@ import ResultView from './components/ResultView.jsx';
 import { runSeatLottery } from './utils/lottery.js';
 import { Dices, Sparkles, AlertCircle, Volume2, VolumeX } from 'lucide-react';
 
-// Background Theme Configurations (Preserves both Facebook Reel & Glacier Express)
+// Background Theme Configurations (Universal H.264 format for 100% iOS & Mobile compatibility)
 const THEMES = {
   reel: {
     videoSrc: '/reel-synced.mp4',
     audioSrc: '/reel-audio.m4a',
-    name: 'Facebook Reel'
+    name: 'Facebook Reel H.264 HD'
   },
   glacier: {
     videoSrc: '/glacier-express.mp4',
@@ -55,13 +55,12 @@ export default function App() {
     }
   }, [participantsText, seatMode]);
 
-  // Ensure Mobile Autoplay: Video plays muted immediately, audio attaches to user gesture
+  // Universal Mobile Autoplay: Force video play on mount, handle audio on gesture
   useEffect(() => {
-    // Force video playback on mobile
     if (videoRef.current) {
       videoRef.current.muted = true;
       videoRef.current.play().catch(err => {
-        console.log('Video autoplay fallback:', err);
+        console.log('Mobile video autoplay fallback:', err);
       });
     }
 
@@ -161,7 +160,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen text-white flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-[#DFB15B] selection:text-black overflow-x-hidden">
       
-      {/* Background Audio Element (Allows clean sound toggling without breaking mobile video autoplay) */}
+      {/* Background Audio Element */}
       <audio
         ref={audioRef}
         src={CURRENT_THEME.audioSrc}
@@ -169,7 +168,7 @@ export default function App() {
         preload="auto"
       />
 
-      {/* Guaranteed Mobile Autoplay Video Background (Muted + PlaysInline) */}
+      {/* Universal H.264 Mobile Compatible Video Background (iOS Safari & Android Ready) */}
       <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
         <video
           ref={videoRef}
@@ -177,6 +176,7 @@ export default function App() {
           loop
           muted
           playsInline
+          webkit-playsinline="true"
           preload="auto"
           className="w-full h-full object-cover"
         >
