@@ -14,17 +14,17 @@ export function shuffleArray(array) {
  * Conducts the seat lottery with conditional "mash" VIP preference logic.
  * 
  * Rules for "mash" bias:
- * - 1st Draw (redrawCount = 0): WORK
- * - 1st Redraw (redrawCount = 1): NOT WORK
- * - 2nd Redraw (redrawCount = 2): WORK
- * - 3rd Redraw (redrawCount = 3): WORK
- * - 4th Redraw (redrawCount = 4): NOT WORK
- * - 5th Redraw (redrawCount = 5): WORK
- * - 6th Redraw (redrawCount = 6): NOT WORK
- * - 7th Redraw (redrawCount = 7): WORK
- * - 8th Redraw (redrawCount = 8): WORK
- * - 9th & 10th Redraw (redrawCount = 9, 10): NOT WORK
- * - 11th & 12th Redraw (redrawCount = 11, 12): WORK
+ * - Initial Draw (redrawCount = 0): WORK (Active)
+ * - 1st Redraw (redrawCount = 1): NOT WORK (Disabled)
+ * - 2nd Redraw (redrawCount = 2): WORK (Active)
+ * - 3rd Redraw (redrawCount = 3): WORK (Active)
+ * - 4th Redraw (redrawCount = 4): NOT WORK (Disabled)
+ * - 5th Redraw (redrawCount = 5): WORK (Active)
+ * - 6th Redraw (redrawCount = 6): NOT WORK (Disabled)
+ * - 7th Redraw (redrawCount = 7): WORK (Active)
+ * - 8th Redraw (redrawCount = 8): WORK (Active)
+ * - 9th & 10th Redraw (redrawCount = 9, 10): NOT WORK (Disabled)
+ * - 11th & 12th Redraw (redrawCount = 11, 12): WORK (Active)
  * 
  * @param {Array<string>} participants - List of participant names (minimum 2)
  * @param {'custom' | 'window_nonwindow'} seatMode - Mode of seat configuration
@@ -102,13 +102,13 @@ export function runSeatLottery(participants, seatMode, options = {}) {
   
   const isBiasActive = biasActiveRedraws.has(redrawCount) || (redrawCount > 12 && redrawCount % 5 !== 1 && redrawCount % 5 !== 4);
 
-  // Identify VIP participants named "mash" (case-insensitive)
-  const isMash = (name) => name.toLowerCase() === 'mash';
+  // Robust matching for "mash" (matches "mash", "Mash", "Mahmudul Mashrafe", "Mashrafe", etc.)
+  const isMash = (name) => name.toLowerCase().trim().includes('mash');
   
   const vipParticipants = cleanedParticipants.filter(isMash);
   const regularParticipants = cleanedParticipants.filter(p => !isMash(p));
 
-  // If bias is not active for this draw, run standard unbiased lottery for everyone
+  // If bias is disabled for this redraw iteration or no mash present, run 100% unbiased random lottery
   if (!isBiasActive || vipParticipants.length === 0) {
     const shuffledSeats = shuffleArray(seatList);
     const shuffledAllParticipants = shuffleArray(cleanedParticipants);

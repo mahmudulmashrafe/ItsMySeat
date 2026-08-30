@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ParticipantInput from './components/ParticipantInput.jsx';
 import SeatConfig from './components/SeatConfig.jsx';
 import LotteryAnimation from './components/LotteryAnimation.jsx';
@@ -29,8 +29,9 @@ export default function App() {
   // Custom seats state
   const [customSeats, setCustomSeats] = useState([]);
 
-  // Redraw sequence tracking state
+  // Redraw sequence tracking state + ref for synchronous closure reliability
   const [redrawCount, setRedrawCount] = useState(0);
+  const redrawCountRef = useRef(0);
 
   const [step, setStep] = useState('input');
   const [results, setResults] = useState([]);
@@ -52,7 +53,8 @@ export default function App() {
 
   const handleStartLottery = () => {
     setErrorMessage(null);
-    setRedrawCount(0); // Initial draw (redrawCount = 0)
+    redrawCountRef.current = 0;
+    setRedrawCount(0);
 
     if (participantsList.length < 2) {
       setErrorMessage('Please enter at least 2 participants.');
@@ -81,7 +83,7 @@ export default function App() {
         customSeats,
         windowCount,
         nonWindowCount,
-        redrawCount
+        redrawCount: redrawCountRef.current
       });
       setResults(outcome);
       setStep('results');
@@ -92,15 +94,18 @@ export default function App() {
   };
 
   const handleRedraw = () => {
-    setRedrawCount(prev => prev + 1); // Increment redraw count (1st redraw, 2nd redraw, etc.)
+    const nextCount = redrawCountRef.current + 1;
+    redrawCountRef.current = nextCount;
+    setRedrawCount(nextCount);
     setStep('drawing');
   };
 
   const handleReset = () => {
+    redrawCountRef.current = 0;
+    setRedrawCount(0);
     setStep('input');
     setResults([]);
     setErrorMessage(null);
-    setRedrawCount(0);
   };
 
   const currentTotalSeats = seatMode === 'window_nonwindow'
