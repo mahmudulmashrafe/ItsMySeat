@@ -11,7 +11,7 @@ const THEMES = {
   reel: {
     videoSrc: '/reel-bg.mp4',
     audioSrc: '/reel-audio.m4a',
-    name: 'Facebook Reel'
+    name: 'Facebook Reel 1080p HD'
   },
   glacier: {
     videoSrc: '/glacier-express.mp4',
@@ -171,7 +171,7 @@ export default function App() {
         preload="auto"
       />
 
-      {/* Background Looping Video (Uses Active Theme Video from Facebook Reel) */}
+      {/* Full 1080p High-Resolution Background Video (Facebook Reel 1080x1920) */}
       <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#0A0807]">
         <video
           autoPlay
@@ -179,11 +179,11 @@ export default function App() {
           muted
           playsInline
           preload="auto"
-          className="w-full h-full object-cover scale-105 filter brightness-90 contrast-105"
+          className="w-full h-full object-cover"
         >
           <source src={CURRENT_THEME.videoSrc} type="video/mp4" />
         </video>
-        {/* Dark gradient overlay for text readability */}
+        {/* Subtle dark gradient overlay for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65"></div>
       </div>
 
@@ -268,9 +268,9 @@ export default function App() {
                   disabled={!isValidToSubmit}
                   className="w-full sm:w-auto px-10 py-3.5 bg-[#DFB15B] hover:bg-[#caa050] text-black font-black text-sm sm:text-base rounded-xl shadow-xl shadow-[#DFB15B]/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2.5 cursor-pointer"
                 >
-                  <Dices className="w-5 h-5 text-black" />
+                  <Dices className="w-5 h-5 text-[#0A0807]" />
                   <span>Run Seat Lottery</span>
-                  <Sparkles className="w-4 h-4 text-black" />
+                  <Sparkles className="w-4 h-4 text-[#0A0807]" />
                 </button>
               </div>
             </div>
